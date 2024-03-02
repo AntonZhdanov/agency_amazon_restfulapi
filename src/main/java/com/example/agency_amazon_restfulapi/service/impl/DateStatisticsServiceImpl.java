@@ -19,11 +19,15 @@ public class DateStatisticsServiceImpl implements DateStatisticsService {
     private final DateStatisticsRepository dateRepository;
     private final DateStatisticsMapper dateMapper;
 
-
     @Override
     @Cacheable(value = "statisticsCache", key = "#date")
     public List<SalesAndTrafficByDateDto> getByDate(LocalDate date) {
+        if (date == null) {
+            throw new IllegalArgumentException("Date must not be null");
+        }
+
         List<SalesAndTrafficByDate> result = dateRepository.findAllByDate(date);
+
         if (result.isEmpty()) {
             throw new EntityNotFoundException("No statistics found for date: " + date);
         }
@@ -34,6 +38,15 @@ public class DateStatisticsServiceImpl implements DateStatisticsService {
     @Override
     @Cacheable(value = "statisticsCache", key = "{#dateFrom, #dateTo}")
     public List<SalesAndTrafficByDateDto> getByDateBetween(LocalDate dateFrom, LocalDate dateTo) {
+        if (dateFrom == null || dateTo == null) {
+            throw new IllegalArgumentException("Date range must not be null");
+        }
+        if (dateFrom.isAfter(dateTo)) {
+            throw new IllegalArgumentException("Start date must be before or equal to end date");
+        }
+        if (dateFrom.isEqual(dateTo)) {
+            throw new IllegalArgumentException("Start date and end date must not be equal");
+        }
         return dateRepository.findAllByDateBetween(dateFrom, dateTo).stream()
                 .map(dateMapper::toDto)
                 .toList();

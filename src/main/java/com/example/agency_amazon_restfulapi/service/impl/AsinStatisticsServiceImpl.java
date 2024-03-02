@@ -18,7 +18,6 @@ public class AsinStatisticsServiceImpl implements AsinStatisticsService {
     private final AsinStatisticsRepository asinRepository;
     private final AsinStatisticsMapper asinMapper;
 
-
     @Override
     @Cacheable(value = "statisticsCache", key = "#asins")
     public List<SalesAndTrafficByAsinDto> getReportsByAsin(List<String> asins) {
@@ -32,6 +31,9 @@ public class AsinStatisticsServiceImpl implements AsinStatisticsService {
     @Override
     @Cacheable(value = "statisticsCache", key = "'AllAsins:' + #pageable")
     public List<SalesAndTrafficByAsinDto> getAllReportsByAllAsins(Pageable pageable) {
+        if (pageable == null) {
+            throw new NullPointerException("Pageable must not be null");
+        }
         return asinRepository.findAll(pageable).stream()
                 .map(asinMapper::toDto)
                 .toList();

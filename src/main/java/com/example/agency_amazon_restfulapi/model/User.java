@@ -2,6 +2,7 @@ package com.example.agency_amazon_restfulapi.model;
 
 import com.mongodb.lang.NonNull;
 import lombok.AllArgsConstructor;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,6 +18,7 @@ import java.util.Set;
 @Document(collection = "users")
 @Getter
 @Setter
+@EqualsAndHashCode
 @NoArgsConstructor
 @AllArgsConstructor
 public class User implements UserDetails {
