@@ -2,6 +2,7 @@ package com.example.agency_amazon_restfulapi.service.impl;
 
 import com.example.agency_amazon_restfulapi.dto.user.UserRegistrationRequestDto;
 import com.example.agency_amazon_restfulapi.dto.user.UserResponseDto;
+import com.example.agency_amazon_restfulapi.exception.EntityNotFoundException;
 import com.example.agency_amazon_restfulapi.exception.RegistrationException;
 import com.example.agency_amazon_restfulapi.mapper.UserMapper;
 import com.example.agency_amazon_restfulapi.model.Role;
@@ -33,7 +34,7 @@ public class UserServiceImpl implements UserService {
         user.setPassword(passwordEncoder.encode(requestDto.password()));
 
         Role defaultRole = roleRepository.findRoleByRoleName(Role.RoleName.ROLE_USER)
-                .orElseThrow(() -> new RegistrationException("Default role not found"));
+                .orElseThrow(() -> new EntityNotFoundException("Default role R0LE_USER note found"));
         user.setRoles(Set.of(defaultRole));
 
         User savedUser = userRepository.save(user);

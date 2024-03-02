@@ -1,4 +1,4 @@
-package com.example.agency_amazon_restfulapi.cachemanager;
+package com.example.agency_amazon_restfulapi.service.cachemanager;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.CacheManager;

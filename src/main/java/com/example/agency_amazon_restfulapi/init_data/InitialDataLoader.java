@@ -1,4 +1,4 @@
-package com.example.agency_amazon_restfulapi.initdata;
+package com.example.agency_amazon_restfulapi.init_data;
 
 import com.example.agency_amazon_restfulapi.dto.report.StatisticsReportInfoDto;
 import com.example.agency_amazon_restfulapi.mapper.AsinStatisticsMapper;

@@ -1,6 +1,6 @@
 package com.example.agency_amazon_restfulapi.service.scheduledservice;
 
-import com.example.agency_amazon_restfulapi.cachemanager.StatisticsCacheService;
+import com.example.agency_amazon_restfulapi.service.cachemanager.StatisticsCacheService;
 import com.example.agency_amazon_restfulapi.dto.report.StatisticsReportInfoDto;
 import com.example.agency_amazon_restfulapi.mapper.AsinStatisticsMapper;
 import com.example.agency_amazon_restfulapi.mapper.DateStatisticsMapper;
@@ -26,13 +26,8 @@ public class ScheduledUpdatesCacheService {
     private final StatisticsCacheService statisticsCacheService;
 
     @Scheduled(fixedRate = 300_000)
-    @CacheEvict(cacheNames = {
-            "reportByDate",
-            "reportsByDateBetween",
-            "allReportsByDates",
-            "reportByAsin",
-            "allReportByAsins"
-    })
+    @CacheEvict(cacheNames = "statisticsCache",
+            allEntries = true)
     public void scheduledDatabaseUpdate() {
         StatisticsReportInfoDto updatedReport = fileReaderService.readFile(FILE_PATH);
         statisticsCacheService.clearAllCaches();

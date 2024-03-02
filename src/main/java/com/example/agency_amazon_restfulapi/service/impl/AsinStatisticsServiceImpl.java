@@ -1,7 +1,9 @@
 package com.example.agency_amazon_restfulapi.service.impl;
 
 import com.example.agency_amazon_restfulapi.dto.sales.SalesAndTrafficByAsinDto;
+import com.example.agency_amazon_restfulapi.exception.EntityNotFoundException;
 import com.example.agency_amazon_restfulapi.mapper.AsinStatisticsMapper;
+import com.example.agency_amazon_restfulapi.model.SalesAndTrafficByAsin;
 import com.example.agency_amazon_restfulapi.repository.AsinStatisticsRepository;
 import com.example.agency_amazon_restfulapi.service.AsinStatisticsService;
 import lombok.RequiredArgsConstructor;
@@ -18,16 +20,17 @@ public class AsinStatisticsServiceImpl implements AsinStatisticsService {
 
 
     @Override
-    @Cacheable(value = "reportByAsin", key = "#asins")
+    @Cacheable(value = "statisticsCache", key = "#asins")
     public List<SalesAndTrafficByAsinDto> getReportsByAsin(List<String> asins) {
-        return asinRepository.findByParentAsinIn(asins).stream()
-                .map(asinMapper::toDto)
-                .toList();
-
+        List<SalesAndTrafficByAsin> result = asinRepository.findByParentAsinIn(asins);
+        if (result.isEmpty()) {
+            throw new EntityNotFoundException("No statistics found for ASINs: " + asins);
+        }
+        return result.stream().map(asinMapper::toDto).toList();
     }
 
     @Override
-    @Cacheable(value = "allReportByAsins", key = "#pageable")
+    @Cacheable(value = "statisticsCache", key = "'AllAsins:' + #pageable")
     public List<SalesAndTrafficByAsinDto> getAllReportsByAllAsins(Pageable pageable) {
         return asinRepository.findAll(pageable).stream()
                 .map(asinMapper::toDto)

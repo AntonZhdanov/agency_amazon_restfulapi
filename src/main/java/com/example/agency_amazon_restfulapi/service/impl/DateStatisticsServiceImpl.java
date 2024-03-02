@@ -1,7 +1,9 @@
 package com.example.agency_amazon_restfulapi.service.impl;
 
 import com.example.agency_amazon_restfulapi.dto.sales.SalesAndTrafficByDateDto;
+import com.example.agency_amazon_restfulapi.exception.EntityNotFoundException;
 import com.example.agency_amazon_restfulapi.mapper.DateStatisticsMapper;
+import com.example.agency_amazon_restfulapi.model.SalesAndTrafficByDate;
 import com.example.agency_amazon_restfulapi.repository.DateStatisticsRepository;
 import com.example.agency_amazon_restfulapi.service.DateStatisticsService;
 import lombok.RequiredArgsConstructor;
@@ -19,15 +21,18 @@ public class DateStatisticsServiceImpl implements DateStatisticsService {
 
 
     @Override
-    @Cacheable(value = "reportByDate", key = "#date")
+    @Cacheable(value = "statisticsCache", key = "#date")
     public List<SalesAndTrafficByDateDto> getByDate(LocalDate date) {
-        return dateRepository.findAllByDate(date).stream()
-                .map(dateMapper::toDto)
-                .toList();
+        List<SalesAndTrafficByDate> result = dateRepository.findAllByDate(date);
+        if (result.isEmpty()) {
+            throw new EntityNotFoundException("No statistics found for date: " + date);
+        }
+        return result.stream()
+                .map(dateMapper::toDto).toList();
     }
 
     @Override
-    @Cacheable(value = "reportsByDateBetween", key = "{#dateFrom, #dateTo}")
+    @Cacheable(value = "statisticsCache", key = "{#dateFrom, #dateTo}")
     public List<SalesAndTrafficByDateDto> getByDateBetween(LocalDate dateFrom, LocalDate dateTo) {
         return dateRepository.findAllByDateBetween(dateFrom, dateTo).stream()
                 .map(dateMapper::toDto)
@@ -35,7 +40,7 @@ public class DateStatisticsServiceImpl implements DateStatisticsService {
     }
 
     @Override
-    @Cacheable(value = "allReportsByDates", key = "#pageable")
+    @Cacheable(value = "statisticsCache", key = "'AllDates:' + #pageable")
     public List<SalesAndTrafficByDateDto> getAll(Pageable pageable) {
         return dateRepository.findAll(pageable).stream()
                 .map(dateMapper::toDto)

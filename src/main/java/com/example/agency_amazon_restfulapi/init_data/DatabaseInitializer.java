@@ -1,4 +1,4 @@
-package com.example.agency_amazon_restfulapi.initdata;
+package com.example.agency_amazon_restfulapi.init_data;
 
 import com.example.agency_amazon_restfulapi.model.Role;
 import com.example.agency_amazon_restfulapi.repository.RoleRepository;
